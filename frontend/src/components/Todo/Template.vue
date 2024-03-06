@@ -62,7 +62,7 @@
               @click="handleEdit(task.id)"
               @dragstart="handleDragStart($event)"
               @drag="handleDrag"
-              class="p-2 bg-slate-400 relative"
+              class="p-2 bg-slate-400 relative cursor-pointer"
             >
               <h1 class="text-xl font-semibold">{{ task.title }}</h1>
               <p>{{ task.description }}</p>
@@ -93,7 +93,7 @@
               @click="handleEdit(task.id)"
               @dragstart="handleDragStart($event)"
               @drag="handleDrag"
-              class="p-2 bg-green-400 relative"
+              class="p-2 bg-green-400 relative cursor-pointer"
             >
               <h1 class="text-xl font-semibold">{{ task.title }}</h1>
               <p>{{ task.description }}</p>
@@ -125,7 +125,7 @@
               draggable="true"
               @dragstart="handleDragStart($event)"
               @drag="handleDrag()"
-              class="p-2 bg-stone-200 relative hover:cursor-pointer"
+              class="p-2 bg-stone-200 relative cursor-pointer"
             >
               <h1 class="text-xl font-semibold">{{ task.title }}</h1>
               <p>{{ task.description }}</p>
@@ -144,10 +144,11 @@
       </div>
     </div>
     <div
+      id="editWindow"
       class="fixed top-0 right-0 h-full min-h-full transition-all duration-100 ease-out z-[2] border-2 bg-gray-100 flex justify-center overflow-hidden"
       :style="{ width: editing ? '400px' : '0px' }"
     >
-      <div class="p-5">
+      <div class="p-5" id="editWindow">
         <header class="text-2xl font-semibold">Редактирование задачи</header>
         <form class="flex flex-col items-center pt-10" @submit.prevent="updateTask()">
           <input
@@ -177,7 +178,7 @@
               @click="deleteTask()"
             >
               Удалить
-          </button>
+            </button>
           </div>
         </form>
       </div>
@@ -189,7 +190,7 @@
 import { useTasksStore } from '@/stores/taskStore'
 
 import { ref } from 'vue'
-
+import { onMounted } from 'vue'
 const taskStore = useTasksStore()
 const asideWidth = ref('20%')
 
@@ -209,14 +210,10 @@ const draggedItemId = ref(null)
 
 const handleDragStart = (e) => {
   draggedItemId.value = e.target.id
-  const element = document.getElementById(draggedItemId.value)
-  element.classList.add('dragging')
-  console.log(draggedItemId.value)
 }
 
 const handleDragEnd = async () => {
   if (draggedItemId.value) {
-    console.log(draggedItemId.value)
     const task = taskStore.getTaskById(draggedItemId.value)
     body = {
       status: task.status
@@ -254,7 +251,7 @@ const handleEdit = (id) => {
     editing.value = true
 
     editingIndex.value = id
-    console.log(editingIndex.value)
+
     const task = taskStore.getTaskById(editingIndex.value)
     name.value = task.title
     description.value = task.description
@@ -283,6 +280,17 @@ const handleSave = async () => {
   name.value = ''
   description.value = ''
 }
+
+onMounted(() => {
+  window.addEventListener('click', (e) => {
+    if (editing.value) {
+      if (e.target.id === 'editWindow') {
+        editing.value = false
+        editingIndex.value = null
+      }
+    }
+  })
+})
 </script>
 
 <style scoped>

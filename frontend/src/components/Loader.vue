@@ -1,16 +1,4 @@
-<style scoped>
-.loader {
-  animation: loader 1.5s linear infinite;
-}
-@keyframes loader {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-</style>
+
 <template>
   <div
     class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 flex justify-center items-center"
