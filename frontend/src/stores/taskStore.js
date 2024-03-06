@@ -31,6 +31,15 @@ export const useTasksStore = defineStore({
         notify('Задача обновлена')
       }
     },
+    async deleteTask(id) {
+      const response = await $fetch(`${import.meta.env.VITE_BASE_URL}/delete/${id}`, {
+        method: 'DELETE'
+      })
+      if (response === 'Task deleted') {
+        await this.getTasks()
+        notify('Задача удалена')
+      }
+    },
     async createTask(task) {
       const response = await $fetch(`${import.meta.env.VITE_BASE_URL}/add`, {
         method: 'POST',

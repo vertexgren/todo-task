@@ -68,6 +68,19 @@ router.post("/add", async (req, res) => {
   }
 });
 
+router.delete("/delete/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+  try {
+    client.connect();
+    collection = client.db("Todo").collection("List");
+    await collection.deleteOne({ id });
+    res.json("Task deleted");
+  } catch (error) {
+    console.error("Error deleting task:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+})
+
 app.use('/.netlify/functions/main', router);
 
 module.exports.handler = serverless(app);

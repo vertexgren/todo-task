@@ -164,11 +164,21 @@
             v-model="description"
             placeholder="Описание задачи"
           />
-          <button
-            class="border-2 border-black p-2 text-base w-full mt-2 hover:border-2 transition-all duration-100 ease-in"
-          >
-            Сохранить
+          <div class="flex gap-5">
+            <button
+              type="submit"
+              class="border-2 border-black p-2 text-base w-full mt-2 hover:border-2 transition-all duration-100 ease-in"
+            >
+              Сохранить
+            </button>
+            <button
+              type="button"
+              class="border-2 border-black p-2 text-base w-full mt-2 hover:border-2 transition-all duration-100 ease-in"
+              @click="deleteTask()"
+            >
+              Удалить
           </button>
+          </div>
         </form>
       </div>
     </div>
@@ -229,6 +239,12 @@ const handleDrop = (e, status) => {
     }
     taskStore.updateTask(task.id, body)
   }
+}
+
+const deleteTask = () => {
+  taskStore.deleteTask(editingIndex.value)
+  editing.value = false
+  editingIndex.value = null
 }
 const handleEdit = (id) => {
   if (editing.value && editingIndex.value === id) {
