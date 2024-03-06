@@ -1,0 +1,277 @@
+<template>
+  <div>
+    <header class="text-4xl text-center font-semibold">Список задач</header>
+    <div class="flex flex-wrap w-full mt-[40px]">
+      <aside
+        class="flex justify-center min-h-[500px] flex-col relative text-2xl border-2 border-black items-center transition-all duration-75 ease-out overflow-hidden"
+        :style="{ width: asideWidth }"
+      >
+        <div class="absolute top-0 right-0" @click="toggleAside">
+          <svg
+            v-if="asideWidth === '20%'"
+            xmlns="http://www.w3.org/2000/svg"
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+          >
+            <path fill="#000000" d="M5 19v-6h2v4h4v2zm12-8V7h-4V5h6v6z" />
+          </svg>
+          <svg v-else xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+            <path fill="#000000" d="M11 13v6H9v-4H5v-2zm4-8v4h4v2h-6V5z" />
+          </svg>
+        </div>
+        <div class="p-5" v-if="asideWidth === '20%'">
+          <div class="text-2xl">Создание задачи</div>
+          <form class="flex flex-col items-center pt-10" @submit.prevent="handleSave()">
+            <input
+              class="border-2 border-black p-2 w-full text-base focus:outline-none"
+              type="text"
+              required
+              v-model="name"
+              placeholder="Название задачи"
+            />
+            <input
+              class="border-2 border-black p-2 w-full mt-2 text-base focus:outline-none"
+              type="text"
+              required
+              v-model="description"
+              placeholder="Описание задачи"
+            />
+            <button
+              class="border-2 border-black p-2 text-base w-full mt-2 hover:border-2 transition-all duration-100 ease-in"
+            >
+              Создать
+            </button>
+          </form>
+        </div>
+      </aside>
+      <div class="w-3/4 ml-2 flex flex-1 justify-between p-5 flex-row border-2 border-black">
+        <div
+          class="flex flex-col basis-1/3 gap-2 p-2 h-full"
+          @dragover="handleDragOver($event, 'Not Assigned')"
+          @dragend="handleDragEnd"
+          @drop="handleDrop($event, 'Not Assigned')"
+        >
+          <h1 class="text-2xl font-semibold text-center">Не назначены</h1>
+          <div class="grid grid-cols-1 gap-2">
+            <div
+              v-for="task in taskStore.getNotAssigned"
+              :key="task.id"
+              :id="task.id"
+              draggable="true"
+              @click="handleEdit(task.id)"
+              @dragstart="handleDragStart($event)"
+              @drag="handleDrag"
+              class="p-2 bg-slate-400 relative"
+            >
+              <h1 class="text-xl font-semibold">{{ task.title }}</h1>
+              <p>{{ task.description }}</p>
+              <div class="absolute top-0 right-0 z-[2] cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 21 21">
+                  <path
+                    fill="#888888"
+                    fill-rule="evenodd"
+                    d="M7 5h2v2H7zm5 0h2v2h-2zM7 9h2v2H7zm5 0h2v2h-2zm-5 4h2v2H7zm5 0h2v2h-2z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="flex flex-col basis-1/3 gap-2 p-2 h-full"
+          @dragover="handleDragOver($event, 'In Progress')"
+          @drop="handleDrop($event, 'In Progress')"
+        >
+          <h1 class="text-2xl font-semibold text-center">В процессе</h1>
+          <div class="grid grid-cols-1 gap-2">
+            <div
+              v-for="task in taskStore.getInProgress"
+              :key="task.id"
+              :id="task.id"
+              draggable="true"
+              @click="handleEdit(task.id)"
+              @dragstart="handleDragStart($event)"
+              @drag="handleDrag"
+              class="p-2 bg-green-400 relative"
+            >
+              <h1 class="text-xl font-semibold">{{ task.title }}</h1>
+              <p>{{ task.description }}</p>
+              <div class="absolute top-0 right-0 cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 21 21">
+                  <path
+                    fill="#888888"
+                    fill-rule="evenodd"
+                    d="M7 5h2v2H7zm5 0h2v2h-2zM7 9h2v2H7zm5 0h2v2h-2zm-5 4h2v2H7zm5 0h2v2h-2z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="flex flex-col basis-1/3 gap-2 p-2 h-full"
+          @dragover="handleDragOver($event, 'Completed')"
+          @dragend="handleDragEnd"
+          @drop="handleDrop($event, 'Completed')"
+        >
+          <h1 class="text-2xl font-semibold text-center">Завершенные</h1>
+          <div class="grid grid-cols-1 gap-2 h-fit">
+            <div
+              v-for="task in taskStore.getCompleted"
+              :key="task.id"
+              :id="task.id"
+              @click="handleEdit(task.id)"
+              draggable="true"
+              @dragstart="handleDragStart($event)"
+              @drag="handleDrag()"
+              class="p-2 bg-stone-200 relative hover:cursor-pointer"
+            >
+              <h1 class="text-xl font-semibold">{{ task.title }}</h1>
+              <p>{{ task.description }}</p>
+              <div class="absolute top-0 right-0 cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 21 21">
+                  <path
+                    fill="#888888"
+                    fill-rule="evenodd"
+                    d="M7 5h2v2H7zm5 0h2v2h-2zM7 9h2v2H7zm5 0h2v2h-2zm-5 4h2v2H7zm5 0h2v2h-2z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="fixed top-0 right-0 h-full min-h-full transition-all duration-100 ease-out z-[2] border-2 bg-gray-100 flex justify-center overflow-hidden"
+      :style="{ width: editing ? '400px' : '0px' }"
+    >
+      <div class="p-5">
+        <header class="text-2xl font-semibold">Редактирование задачи</header>
+        <form class="flex flex-col items-center pt-10" @submit.prevent="updateTask()">
+          <input
+            class="border-2 border-black p-2 w-full text-base focus:outline-none"
+            type="text"
+            required
+            v-model="name"
+            placeholder="Название задачи"
+          />
+          <input
+            class="border-2 border-black p-2 w-full mt-2 text-base focus:outline-none"
+            type="text"
+            required
+            v-model="description"
+            placeholder="Описание задачи"
+          />
+          <button
+            class="border-2 border-black p-2 text-base w-full mt-2 hover:border-2 transition-all duration-100 ease-in"
+          >
+            Сохранить
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { useTasksStore } from '@/stores/taskStore'
+
+import { ref } from 'vue'
+
+const taskStore = useTasksStore()
+const asideWidth = ref('20%')
+
+const editing = ref(false)
+const editingIndex = ref(null)
+const name = ref('')
+const description = ref('')
+const toggleAside = () => {
+  asideWidth.value = asideWidth.value === '5%' ? '20%' : '5%'
+}
+
+await taskStore.getTasks()
+
+const handleDrag = () => {}
+
+const draggedItemId = ref(null)
+
+const handleDragStart = (e) => {
+  draggedItemId.value = e.target.id
+  const element = document.getElementById(draggedItemId.value)
+  element.classList.add('dragging')
+  console.log(draggedItemId.value)
+}
+
+const handleDragEnd = async () => {
+  if (draggedItemId.value) {
+    console.log(draggedItemId.value)
+    const task = taskStore.getTaskById(draggedItemId.value)
+    body = {
+      status: task.status
+    }
+    await taskStore.updateTask(draggedItemId.value, body)
+  }
+}
+
+const handleDragOver = (e, status) => {
+  e.preventDefault()
+  taskStore.changeStatus(draggedItemId.value, status)
+}
+const handleDrop = (e, status) => {
+  e.preventDefault()
+  const task = taskStore.getTaskById(draggedItemId.value)
+  if (task) {
+    taskStore.moveTask(task, status)
+    const body = {
+      status: status
+    }
+    taskStore.updateTask(task.id, body)
+  }
+}
+const handleEdit = (id) => {
+  if (editing.value && editingIndex.value === id) {
+    editing.value = false
+    editingIndex.value = null
+  } else {
+    editing.value = true
+
+    editingIndex.value = id
+    console.log(editingIndex.value)
+    const task = taskStore.getTaskById(editingIndex.value)
+    name.value = task.title
+    description.value = task.description
+  }
+}
+
+const updateTask = () => {
+  const body = {
+    title: name.value,
+    description: description.value
+  }
+  taskStore.updateTask(editingIndex.value, body)
+
+  editing.value = false
+  editingIndex.value = null
+
+  notification.$notify('Задача успешно обновлена')
+}
+
+const handleSave = async () => {
+  const body = {
+    title: name.value,
+    description: description.value
+  }
+  await taskStore.createTask(body)
+  name.value = ''
+  description.value = ''
+}
+</script>
+
+<style scoped>
+.dragging {
+  opacity: 0.5;
+  border: 2px dashed black;
+}
+</style>

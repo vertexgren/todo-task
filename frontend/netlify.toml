@@ -1,0 +1,15 @@
+# FILEPATH: /Users/ilasdzakupov/Desktop/todolist/frontend/netlify.toml
+
+# Set the build command
+[build]
+  command = "npm run build"
+
+# Set the publish directory
+[build.publish]
+  directory = "dist"
+
+# Redirect all requests to the index.html file
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
