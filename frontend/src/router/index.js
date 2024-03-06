@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
+import Todos from '../views/Todos.vue'
 import defaultLayout from '@/layouts/defaultLayout.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,7 +19,7 @@ const router = createRouter({
       meta: {
         layout: defaultLayout
       },
-      component: () => import('@/views/Todos.vue')
+      component: Todos
     }
   ]
 })
