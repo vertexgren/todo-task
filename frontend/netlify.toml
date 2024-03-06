@@ -1,28 +1,5 @@
+NODE_VERSION = "21"
+
 [build]
-  base = "dist/"
+  publish = "./dist"
   command = "npm run build"
-
-
-
-[build.environment]
-  # Set environment variables that will be available during the build
-  # EXAMPLE_VAR = "example"
-
-[[redirects]]
-  # For Single Page Applications (SPA) to handle client-side routing
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
-[[headers]]
-  # Cache control for static assets
-  for = "/*"
-    [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
-
-# Uncomment this section if you're using functions in your project
-# [[plugins]]
-#   package = "@netlify/plugin-functions-core"
-
-# [[plugins]]
-#   package = "@netlify/plugin-functions-install-core"
