@@ -133,6 +133,20 @@
             v-model="description"
             placeholder="Описание задачи"
           />
+          <div class="flex gap-5 w-full pt-2">
+            <div class="flex flex-col items-center w-full">
+              <label for="status" class="text-base">Статус</label>
+              <select
+                class="border-2 border-black p-2 w-full mt-2 text-base focus:outline-none"
+                id="status"
+                v-model="status"
+              >
+                <option value="Not Assigned">Не назначена</option>
+                <option value="In Progress">В процессе</option>
+                <option value="Completed">Выполненна</option>
+              </select>
+            </div>
+          </div>
           <div class="flex gap-5">
             <button
               type="submit"
@@ -221,6 +235,7 @@ const handleEdit = (id) => {
     const task = taskStore.getTaskById(editingIndex.value)
     name.value = task.title
     description.value = task.description
+    status.value = task.status
   }
 }
 
@@ -229,10 +244,14 @@ const updateTask = () => {
     title: name.value,
     description: description.value
   }
+  if (status.value) {
+    body.status = status.value
+  }
   taskStore.updateTask(editingIndex.value, body)
 
   editing.value = false
   editingIndex.value = null
+
 
   notification.$notify('Задача успешно обновлена')
 }

@@ -1,13 +1,14 @@
+<!-- eslint-disable vue/no-mutating-props -->
 <template>
   <div>
     <Teleport to="body">
       <Transition name="fade">
         <div
           v-if="props.openned"
-          class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-4 rounded-md z-50"
+          class="fixed top-1/2 left-1/2 min-w-[300px] transform -translate-x-1/2 -translate-y-1/2 bg-white p-4 rounded-md z-50"
         >
           <aside
-            class="flex justify-center min-h-[500px] flex-col relative text-2xl border-2 border-black items-center transition-all duration-75 ease-out overflow-hidden"
+            class="flex justify-center min-h-[500px] w-full flex-col relative text-2xl border-2 border-black items-center transition-all duration-75 ease-out overflow-hidden"
           >
             <div class="absolute top-5 right-5">
               <button
