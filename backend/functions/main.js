@@ -56,11 +56,11 @@ router.get("/", (req, res) => {
 });
 
 router.post("/add", async (req, res) => {
-  const { title, description } = req.body;
+  const { title, description,status } = req.body;
   try {
     client.connect();
     collection = client.db("Todo").collection("List");
-    await collection.insertOne({ title, description, status: "Not Assigned" });
+    await collection.insertOne({ id:Math.floor(Math.random() * (1000 - 10 + 1)) + 10,  title, description, status: status ? status : "Not Assigned"});
     res.json("Task added");
   } catch (error) {
     console.error("Error adding task:", error);
