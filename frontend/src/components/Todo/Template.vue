@@ -175,18 +175,12 @@ import TodoTeleport from './AddTeleport.vue'
 import { ref } from 'vue'
 import { onMounted } from 'vue'
 const taskStore = useTasksStore()
-
 const editing = ref(false)
 const adding = ref(false)
 const editingIndex = ref(null)
 const name = ref('')
 const status = ref('')
 const description = ref('')
-
-await taskStore.getTasks()
-
-const handleDrag = () => {}
-
 const draggedItemId = ref(null)
 
 const handleDragStart = (e) => {
@@ -219,11 +213,33 @@ const handleDrop = (e, status) => {
   }
 }
 
+const updateTask = () => {
+  const body = {
+    title: name.value,
+    description: description.value
+  }
+  if (status.value) {
+    body.status = status.value
+  }
+  taskStore.updateTask(editingIndex.value, body)
+
+  editing.value = false
+  editingIndex.value = null
+
+  notification.$notify('Задача успешно обновлена')
+}
+
 const deleteTask = () => {
   taskStore.deleteTask(editingIndex.value)
   editing.value = false
   editingIndex.value = null
 }
+
+const handleAdd = (taskStatus) => {
+  status.value = taskStatus
+  adding.value = true
+}
+
 const handleEdit = (id) => {
   if (editing.value && editingIndex.value === id) {
     editing.value = false
@@ -239,28 +255,7 @@ const handleEdit = (id) => {
   }
 }
 
-const updateTask = () => {
-  const body = {
-    title: name.value,
-    description: description.value
-  }
-  if (status.value) {
-    body.status = status.value
-  }
-  taskStore.updateTask(editingIndex.value, body)
-
-  editing.value = false
-  editingIndex.value = null
-
-
-  notification.$notify('Задача успешно обновлена')
-}
-
-const handleAdd = (taskStatus) => {
-  status.value = taskStatus
-  adding.value = true
-}
-
+await taskStore.getTasks()
 onMounted(() => {
   window.addEventListener('click', (e) => {
     if (editing.value) {

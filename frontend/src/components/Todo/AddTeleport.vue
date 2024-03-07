@@ -69,9 +69,6 @@ const props = defineProps({
 const name = ref('')
 const description = ref('')
 const emits = defineEmits(['close'])
-const close = () => {
-  emits('close')
-}
 
 async function handleSave() {
   const task = {
@@ -81,6 +78,10 @@ async function handleSave() {
   }
   await taskStore.createTask(task)
   close()
+}
+
+const close = () => {
+  emits('close')
 }
 </script>
 <style scoped>
