@@ -74,7 +74,7 @@ const close = () => {
 
 async function handleSave() {
   const task = {
-    name: name.value,
+    title: name.value,
     description: description.value,
     status: props.status
   }
